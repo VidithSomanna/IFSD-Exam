@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Politician Management App</title>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@17.0.2/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+
+  <script type="text/babel">
+    // Define a React component for the politician management app
+    function PoliticianApp() {
+      const [politicians, setPoliticians] = React.useState([]);
+      const [newPolitician, setNewPolitician] = React.useState({name: '', votes: 0, money: 0});
+
+      // Function to handle creating a new politician
+      const handleCreatePolitician = () => {
+        setPoliticians([...politicians, newPolitician]);
+        setNewPolitician({name: '', votes: 0, money: 0});
+      };
+
+      // Function to handle updating a politician
+      const handleUpdatePolitician = (index, updatedPolitician) => {
+        const updatedPoliticians = [...politicians];
+        updatedPoliticians[index] = updatedPolitician;
+        setPoliticians(updatedPoliticians);
+      };
+
+      // Function to handle deleting a politician
+      const handleDeletePolitician = (index) => {
+        const updatedPoliticians = politicians.filter((_, i) => i !== index);
+        setPoliticians(updatedPoliticians);
+      };
+
+      // Function to fetch the list of politicians (read operation)
+      React.useEffect(() => {
+        setTimeout(() => {
+          const fetchedPoliticians = [
+            {name: 'Politician 1', votes: 100, money: 1000},
+            {name: 'Politician 2', votes: 200, money: 2000},
+            {name: 'Politician 3', votes: 300, money: 3000},
+          ];
+          setPoliticians(fetchedPoliticians);
+        }, 1000);
+      }, []);
+
+      // Function to find the politician with the maximum votes
+      const getMaxVotePolitician = () => {
+        let maxVotePolitician = null;
+        let maxVotes = 0;
+
+        politicians.forEach((politician) => {
+          if (politician.votes > maxVotes) {
+            maxVotes = politician.votes;
+            maxVotePolitician = politician;
+          }
+        });
+
+        return maxVotePolitician;
+      };
+
+      // Function to find the politician with the maximum money
+      const getMaxMoneyPolitician = () => {
+        let maxMoneyPolitician = null;
+        let maxMoney = 0;
+
+        politicians.forEach((politician) => {
+          if (politician.money > maxMoney) {
+            maxMoney = politician.money;
+            maxMoneyPolitician = politician;
+          }
+        });
+
+        return maxMoneyPolitician;
+      };
+
+      // Render the maximum vote and maximum money sections
+      const renderMaxSections = () => {
+        const maxVotePolitician = getMaxVotePolitician();
+        const maxMoneyPolitician = getMaxMoneyPolitician();
+
+        return (
+          <div>
+            <h2>Maximum Votes</h2>
+            {maxVotePolitician ? (
+              <div>
+                <p>Name: {maxVotePolitician.name}</p>
+                <p>Votes: {maxVotePolitician.votes}</p>
+              </div>
+            ) : (
+              <p>No politicians available.</p>
+            )}
+
+            <h2>Maximum Money</h2>
+            {maxMoneyPolitician ? (
+              <div>
+                <p>Name: {maxMoneyPolitician.name}</p>
+                <p>Money: {maxMoneyPolitician.money}</p>
+              </div>
+            ) : (
+              <p>No politicians available.</p>
+            )}
+          </div>
+        );
+      };
+
+      return (
+        <div>
+          <h1>Politician Management</h1>
+
+          <h2>Create Politician</h2>
+          <input
+            type="text"
+            placeholder="Name"
+            value={newPolitician.name}
+            onChange={(e) => setNewPolitician({...newPolitician, name: e.target.value})}
+          />
+          <input
+            type="number"
+            placeholder="Votes"
+            value={newPolitician.votes}
+            onChange={(e) => setNewPolitician({...newPolitician, votes: parseInt(e.target.value)})}
+          />
+          <input
+            type="number"
+            placeholder="Money"
+            value={newPolitician.money}
+            onChange={(e) => setNewPolitician({...newPolitician, money: parseInt(e.target.value)})}
+          />
+          <button onClick={handleCreatePolitician}>Create</button>
+
+          <h2>Politicians</h2>
+          {politicians.length > 0 ? (
+            <ul>
+              {politicians.map((politician, index) => (
+                <li key={index}>
+                  {politician.name} - Votes: {politician.votes} - Money: {politician.money}
+                  <button onClick={() => handleUpdatePolitician(index, {...politician, votes: politician.votes + 1})}>
+                    Update Votes
+                  </button>
+                  <button onClick={() => handleDeletePolitician(index)}>Delete</button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No politicians available.</p>
+          )}
+
+          {renderMaxSections()}
+        </div>
+      );
+    }
+
+
+    ReactDOM.render(<PoliticianApp />, document.getElementById('root'));
+  </script>
+</body>
+
+</html>
